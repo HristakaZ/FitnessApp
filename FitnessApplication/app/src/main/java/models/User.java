@@ -1,6 +1,10 @@
 package models;
 
-public class User {
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     private String email, password;
 

@@ -20,17 +20,19 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+
 import models.User;
 
 public class RegisterActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
+    private FirebaseAuth firebaseAuth;
     private EditText email, password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        mAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         email = (EditText)findViewById(R.id.registerEmail);
         password = (EditText)findViewById(R.id.registerPassword);
     }
@@ -60,7 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
                 new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
@@ -73,16 +75,16 @@ public class RegisterActivity extends AppCompatActivity {
                             addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull @NotNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(RegisterActivity.this,
-                                        "The user has been registered successfully!", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                /*TO DO: put the user object(with its unique id) in the intent and pass it to the
-                                  login activity to log in from there and after the user is logged in, go to
-                                  the main activity*/
+                            try {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(RegisterActivity.this,
+                                            "The user has been registered successfully!", Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                }
                             }
-                            else{
-                                Toast.makeText(RegisterActivity.this, "Failed to register the user!",
+                            catch (Exception exception) {
+                                Toast.makeText(RegisterActivity.this, "Oops, something went wrong!",
                                         Toast.LENGTH_LONG).show();
                             }
                         }
