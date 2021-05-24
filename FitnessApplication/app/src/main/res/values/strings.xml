@@ -6,6 +6,8 @@
     <string name="forgotenPassword">Forgotten Password?</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="userEmail"></string> //dinamically setting the email through the logged in user(check account activity)
+    //dynamically setting the email through the logged in user(check account activity)
+    <string name="userEmail"></string>
     <string name="redirectToAccountText">My account</string>
+    <string name="redirectToFitnessProgramText">Make a fitness program of exercises</string>
 </resources>
