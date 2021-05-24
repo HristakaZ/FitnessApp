@@ -16,11 +16,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userEmail = user.getEmail();
         Toast.makeText(this, "Welcome to the ARHNULD Fitness App! Ready to become the terminator?",
                 Toast.LENGTH_LONG).show();
     }
+
     public void logout(View view) {
         Intent logoutIntent = new Intent(this, LoginActivity.class);
         startActivity(logoutIntent);
     }
+
+    public void redirectToAccount(View view) {
+        Intent intent = new Intent(this, AccountActivity.class);
+        startActivity(intent);
+    }
+
 }
