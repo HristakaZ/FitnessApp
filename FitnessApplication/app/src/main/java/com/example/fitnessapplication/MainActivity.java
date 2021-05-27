@@ -10,6 +10,8 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.Serializable;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -18,8 +20,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userEmail = user.getEmail();
-        Toast.makeText(this, "Welcome to the ARHNULD Fitness App! Ready to become the terminator?",
-                Toast.LENGTH_LONG).show();
+        Intent intent = getIntent();
+        if (intent.getSerializableExtra("Exercise created") != null) {
+            Toast.makeText(this, "DON'T LET YOUR MEMES BE DREAMS!", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "Welcome to the ARHNULD Fitness App! Ready to become the terminator?",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     public void logout(View view) {
@@ -29,6 +37,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void redirectToAccount(View view) {
         Intent intent = new Intent(this, AccountActivity.class);
+        startActivity(intent);
+    }
+
+    public void redirectToExercise(View view) {
+        Intent intent = new Intent(this, ExerciseActivity.class);
         startActivity(intent);
     }
 

@@ -10,4 +10,5 @@
     <string name="userEmail"></string>
     <string name="redirectToAccountText">My account</string>
     <string name="redirectToFitnessProgramText">Make a fitness program of exercises</string>
+    <string name="createExercise">Create an exercise</string>
 </resources>
