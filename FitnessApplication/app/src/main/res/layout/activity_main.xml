@@ -50,4 +50,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="34dp"
+        android:layout_marginLeft="34dp"
+        android:layout_marginTop="18dp"
+        android:onClick="redirectToFitnessProgram"
+        android:text="@string/createFitnessProgram"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/redirectToAccountBtn" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

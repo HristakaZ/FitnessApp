@@ -12,6 +12,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
 
+import models.FitnessProgram;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -42,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void redirectToExercise(View view) {
         Intent intent = new Intent(this, ExerciseActivity.class);
+        startActivity(intent);
+    }
+
+    public void redirectToFitnessProgram(View view) {
+        Intent intent = new Intent(this, FitnessProgramActivity.class);
         startActivity(intent);
     }
 
