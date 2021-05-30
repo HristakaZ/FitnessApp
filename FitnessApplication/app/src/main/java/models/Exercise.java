@@ -3,13 +3,13 @@ package models;
 public class Exercise {
 
     private String name;
-    private FitnessProgram fitnessProgram;
+    private String fitnessProgram;
 
     public Exercise() {
 
     }
 
-    public Exercise(String name, FitnessProgram fitnessProgram) {
+    public Exercise(String name, String fitnessProgram) {
         this.name = name;
         this.fitnessProgram = fitnessProgram;
     }
@@ -17,5 +17,5 @@ public class Exercise {
     public String getName() {
         return this.name;
     }
-    public FitnessProgram getFitnessProgram() { return this.fitnessProgram; }
+    public String getFitnessProgram() { return this.fitnessProgram; }
 }

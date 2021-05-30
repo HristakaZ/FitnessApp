@@ -24,8 +24,14 @@ public class AccountActivity extends AppCompatActivity {
         userEmailTextView.setText(userEmail);
     }
 
-    public void redirectToFitnessProgram(View view) {
+    public void redirectToFitnessPrograms(View view) {
         Intent intent = new Intent(this, FitnessProgramActivity.class);
+        intent.putExtra("Fitness programs", "Fitness programs");
+        startActivity(intent);
+    }
+
+    public void redirectToExercise(View view) {
+        Intent intent = new Intent(this, ExerciseActivity.class);
         startActivity(intent);
     }
 

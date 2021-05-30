@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -30,7 +31,7 @@ import models.FitnessProgram;
 
 public class ExerciseActivity extends AppCompatActivity {
     private Spinner fitnessProgramSpinner;
-
+    private ListView exercisesListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,7 @@ public class ExerciseActivity extends AppCompatActivity {
         fitnessProgramSpinner = findViewById(R.id.fitnessProgramOptionSpinner);
         String chosenFitnessProgram = fitnessProgramSpinner.getSelectedItem().toString();
         FitnessProgram fitnessProgram = new FitnessProgram(chosenFitnessProgram);
-        Exercise exercise = new Exercise(exerciseName, fitnessProgram);
+        Exercise exercise = new Exercise(exerciseName, fitnessProgram.getName());
 
         DatabaseReference exercises = FirebaseDatabase.getInstance().getReference("Exercises");
         exercises.push().setValue(exercise).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -90,4 +91,6 @@ public class ExerciseActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

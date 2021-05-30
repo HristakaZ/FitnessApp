@@ -42,14 +42,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void redirectToExercise(View view) {
-        Intent intent = new Intent(this, ExerciseActivity.class);
-        startActivity(intent);
-    }
-
-    public void redirectToFitnessProgram(View view) {
-        Intent intent = new Intent(this, FitnessProgramActivity.class);
-        startActivity(intent);
-    }
-
 }
