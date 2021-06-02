@@ -10,9 +10,11 @@ import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -22,14 +24,23 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StreamDownloadTask;
+import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +48,10 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 import models.FitnessProgram;
 
@@ -49,11 +64,15 @@ public class FitnessProgramActivity extends AppCompatActivity {
     private String imagePath;
     ArrayAdapter<String> fitnessProgramsAdapter;
     ArrayAdapter<String> fitnessProgramsExercisesAdapter;
+    StorageReference storageReference;
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_activity_fitnessprograms);
+        storageReference = FirebaseStorage.getInstance().getReference();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
         Intent intent = getIntent();
         this.createFitnessProgramBtn = findViewById(R.id.createFitnessProgramBtn);
         this.submitCreateFitnessProgramBtn = findViewById(R.id.submitCreateFitnessProgramBtn);
@@ -78,6 +97,7 @@ public class FitnessProgramActivity extends AppCompatActivity {
 
     }
 
+
     public void getFitnessProgramsExercisePicture(AdapterView<?> parent, View view, int position, long id) {
         try {
             setContentView(R.layout.layout_activity_fitnessprogram_exercise_picture);
@@ -91,9 +111,24 @@ public class FitnessProgramActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                     for (DataSnapshot currentExerciseSnapshot : snapshot.getChildren()) {
                         imagePath = currentExerciseSnapshot.child("cloudImagePath")
-                        .getValue(String.class);
-                        Uri uri = Uri.parse(imagePath);
-                        fitnessProgramExercisePicture.setImageURI(uri);
+                                .getValue(String.class);
+                        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child(imagePath.substring(imagePath.indexOf("/images")));
+                        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                // Got the download URL for 'users/me/profile.png'
+                                Glide.with(getApplicationContext())
+                                        .load(uri)
+                                        .into(fitnessProgramExercisePicture);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                // Handle any errors
+                                Toast.makeText(FitnessProgramActivity.this, exception.getMessage(),
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
                 }
 
@@ -102,7 +137,6 @@ public class FitnessProgramActivity extends AppCompatActivity {
 
                 }
             });
-            Toast.makeText(this, imagePath, Toast.LENGTH_LONG).show();
         }
         catch(Exception ex) {
             Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
@@ -112,7 +146,7 @@ public class FitnessProgramActivity extends AppCompatActivity {
     public void setFitnessProgramsInListView(Bundle savedInstanceState) {
             fitnessProgramsListView = findViewById(R.id.myFitnessProgramsListView);
 
-            FirebaseDatabase.getInstance().getReference().child("FitnessPrograms").addValueEventListener(new ValueEventListener() {
+            databaseReference.child("FitnessPrograms").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                     List<String> fitnessProgramNames = new ArrayList<String>();
@@ -138,7 +172,7 @@ public class FitnessProgramActivity extends AppCompatActivity {
          List<String> fitnessProgramExercises = new ArrayList<String>();
          setContentView(R.layout.layout_activity_displayfitnessprogram);
          myFitnessProgramExercises = findViewById(R.id.myFitnessProgramExercises);
-         Query queryEquivalentFitnessProgram = FirebaseDatabase.getInstance().getReference()
+         Query queryEquivalentFitnessProgram = databaseReference
                  .child("Exercises")
                  .orderByChild("fitnessProgram")
                  .equalTo(fitnessProgramsAdapter.getItem(position));
@@ -175,7 +209,7 @@ public class FitnessProgramActivity extends AppCompatActivity {
         TextView fitnessProgramNameText = findViewById(R.id.fitnessProgramName);
         String fitnessProgramName = fitnessProgramNameText.getText().toString();
         FitnessProgram fitnessProgram = new FitnessProgram(fitnessProgramName);
-        DatabaseReference fitnessPrograms = FirebaseDatabase.getInstance().getReference("FitnessPrograms");
+        DatabaseReference fitnessPrograms = databaseReference.child("FitnessPrograms");
         fitnessPrograms.push().setValue(fitnessProgram).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
