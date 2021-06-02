@@ -4,11 +4,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +33,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +45,8 @@ public class FitnessProgramActivity extends AppCompatActivity {
     private Button createFitnessProgramBtn;
     private Button submitCreateFitnessProgramBtn;
     private ListView myFitnessProgramExercises;
+    private ImageView fitnessProgramExercisePicture;
+    private String imagePath;
     ArrayAdapter<String> fitnessProgramsAdapter;
     ArrayAdapter<String> fitnessProgramsExercisesAdapter;
 
@@ -44,6 +57,7 @@ public class FitnessProgramActivity extends AppCompatActivity {
         Intent intent = getIntent();
         this.createFitnessProgramBtn = findViewById(R.id.createFitnessProgramBtn);
         this.submitCreateFitnessProgramBtn = findViewById(R.id.submitCreateFitnessProgramBtn);
+
         if(intent.getStringExtra("Fitness programs") != null) {
             setFitnessProgramsInListView(savedInstanceState);
         }
@@ -62,6 +76,37 @@ public class FitnessProgramActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void getFitnessProgramsExercisePicture(AdapterView<?> parent, View view, int position, long id) {
+        try {
+            setContentView(R.layout.layout_activity_fitnessprogram_exercise_picture);
+            fitnessProgramExercisePicture = findViewById(R.id.fitnessProgramExercisePicture);
+            Query currentExerciseQuery = FirebaseDatabase.getInstance().getReference()
+                    .child("Exercises")
+                    .orderByChild("name")
+                    .equalTo(fitnessProgramsExercisesAdapter.getItem(position));
+            currentExerciseQuery.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                    for (DataSnapshot currentExerciseSnapshot : snapshot.getChildren()) {
+                        imagePath = currentExerciseSnapshot.child("cloudImagePath")
+                        .getValue(String.class);
+                        Uri uri = Uri.parse(imagePath);
+                        fitnessProgramExercisePicture.setImageURI(uri);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                }
+            });
+            Toast.makeText(this, imagePath, Toast.LENGTH_LONG).show();
+        }
+        catch(Exception ex) {
+            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     public void setFitnessProgramsInListView(Bundle savedInstanceState) {
@@ -116,6 +161,13 @@ public class FitnessProgramActivity extends AppCompatActivity {
 
                           }
                    });
+            myFitnessProgramExercises.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    setContentView(R.layout.layout_activity_fitnessprogram_exercise_picture);
+                    getFitnessProgramsExercisePicture(parent, view, position, id);
+                }
+            });
         }
 
 
