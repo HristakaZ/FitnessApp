@@ -10,11 +10,17 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:fontFamily="sans-serif-condensed"
+        android:text="@string/app_name"
+        android:textColor="@color/darkskyblue"
+        android:textSize="32dp"
+        android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.199" />
 
     <Button
         android:id="@+id/btnLogout"
@@ -30,9 +36,9 @@
         android:id="@+id/redirectToAccountBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="147dp"
-        android:layout_marginEnd="59dp"
-        android:layout_marginRight="59dp"
+        android:layout_marginTop="360dp"
+        android:layout_marginEnd="148dp"
+        android:layout_marginRight="148dp"
         android:onClick="redirectToAccount"
         android:text="@string/redirectToAccountText"
         app:layout_constraintEnd_toEndOf="parent"

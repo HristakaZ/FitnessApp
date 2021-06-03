@@ -31,6 +31,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -146,7 +148,10 @@ public class FitnessProgramActivity extends AppCompatActivity {
     public void setFitnessProgramsInListView(Bundle savedInstanceState) {
             fitnessProgramsListView = findViewById(R.id.myFitnessProgramsListView);
 
-            databaseReference.child("FitnessPrograms").addValueEventListener(new ValueEventListener() {
+            databaseReference.child("FitnessPrograms")
+                    .orderByChild("user")
+                    .equalTo(FirebaseAuth.getInstance().getCurrentUser().getEmail())
+                    .addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                     List<String> fitnessProgramNames = new ArrayList<String>();
@@ -208,7 +213,8 @@ public class FitnessProgramActivity extends AppCompatActivity {
     public void createFitnessProgram(View view) {
         TextView fitnessProgramNameText = findViewById(R.id.fitnessProgramName);
         String fitnessProgramName = fitnessProgramNameText.getText().toString();
-        FitnessProgram fitnessProgram = new FitnessProgram(fitnessProgramName);
+        String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        FitnessProgram fitnessProgram = new FitnessProgram(fitnessProgramName, currentUserEmail);
         DatabaseReference fitnessPrograms = databaseReference.child("FitnessPrograms");
         fitnessPrograms.push().setValue(fitnessProgram).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

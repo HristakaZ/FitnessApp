@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -131,7 +132,11 @@ public class ExerciseActivity extends AppCompatActivity {
 
     public Spinner getFitnessPrograms() {
         fitnessProgramSpinner = findViewById(R.id.fitnessProgramOptionSpinner);
-        FirebaseDatabase.getInstance().getReference().child("FitnessPrograms").addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference()
+                .child("FitnessPrograms")
+                .orderByChild("user")
+                .equalTo(FirebaseAuth.getInstance().getCurrentUser().getEmail())
+                .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 List<String> fitnessPrograms = new ArrayList<String>();
@@ -160,7 +165,8 @@ public class ExerciseActivity extends AppCompatActivity {
         String cloudImagePath = imagePath;
         fitnessProgramSpinner = findViewById(R.id.fitnessProgramOptionSpinner);
         String chosenFitnessProgram = fitnessProgramSpinner.getSelectedItem().toString();
-        FitnessProgram fitnessProgram = new FitnessProgram(chosenFitnessProgram);
+        String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        FitnessProgram fitnessProgram = new FitnessProgram(chosenFitnessProgram, currentUserEmail);
         Exercise exercise = new Exercise(exerciseName, cloudImagePath, fitnessProgram.getName());
 
         DatabaseReference exercises = FirebaseDatabase.getInstance().getReference("Exercises");
